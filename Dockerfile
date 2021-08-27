@@ -66,6 +66,8 @@ azel-${BAZEL_VERSION}-installer-linux-x86_64.sh" && \
     rm -f /bazel/installer.sh
 
 COPY . /mediapipe/
+#build dynamic link library for P-Invoke only running on CPU 
+RUN bazel-3.7.2 build --define MEDIAPIPE_DISABLE_GPU=1 --define GCCBUILD mediapipe/examples/desktop/holistic_tracking:holisticlib
 
 # If we want the docker image to contain the pre-built object_detection_offline_demo binary, do the following
 # RUN bazel build -c opt --define MEDIAPIPE_DISABLE_GPU=1 mediapipe/examples/desktop/demo:object_detection_tensorflow_demo

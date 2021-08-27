@@ -17,6 +17,20 @@ licenses(["notice"])
 package(default_visibility = ["//mediapipe/examples:__subpackages__"])
 
 cc_binary(
+   name = "holisticlib",
+   srcs = ["holistic.cc","holistic.h"],
+   deps = [        
+       "//mediapipe/calculators/core:pass_through_calculator",
+       "//mediapipe/framework:calculator_graph",
+       "//mediapipe/framework/port:logging",
+       "//mediapipe/framework/port:parse_text_proto",
+       "//mediapipe/framework/port:status",
+       "//mediapipe/graphs/holistic_tracking:holistic_tracking_cpu_graph_deps"],
+   linkshared = 1,
+   linkstatic = 1
+)
+
+cc_binary(
     name = "holistic_tracking_cpu",
     deps = [
         "//mediapipe/examples/desktop:demo_run_graph_main",
