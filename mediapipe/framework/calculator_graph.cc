@@ -464,25 +464,25 @@ absl::Status CalculatorGraph::ObserveOutputStream(
   return absl::OkStatus();
 }
 
-absl::StatusOr<OutputStreamPoller> CalculatorGraph::AddOutputStreamPoller(
+absl::StatusOr<OutputStreamPoller*> CalculatorGraph::AddOutputStreamPoller(
     const std::string& stream_name) {
-  RET_CHECK(initialized_).SetNoLogging()
-      << "CalculatorGraph is not initialized.";
-  int output_stream_index = validated_graph_->OutputStreamIndex(stream_name);
-  if (output_stream_index < 0) {
-    return mediapipe::NotFoundErrorBuilder(MEDIAPIPE_LOC)
-           << "Unable to attach observer to output stream \"" << stream_name
-           << "\" because it doesn't exist.";
-  }
-  auto internal_poller = std::make_shared<internal::OutputStreamPollerImpl>();
-  MP_RETURN_IF_ERROR(internal_poller->Initialize(
-      stream_name, &any_packet_type_,
-      std::bind(&CalculatorGraph::UpdateThrottledNodes, this,
-                std::placeholders::_1, std::placeholders::_2),
-      &output_stream_managers_[output_stream_index]));
-  OutputStreamPoller poller(internal_poller);
-  graph_output_streams_.push_back(std::move(internal_poller));
-  return std::move(poller);
+    RET_CHECK(initialized_).SetNoLogging()
+        << "CalculatorGraph is not initialized.";
+    int output_stream_index = validated_graph_->OutputStreamIndex(stream_name);
+    if (output_stream_index < 0) {
+        return mediapipe::NotFoundErrorBuilder(MEDIAPIPE_LOC)
+            << "Unable to attach observer to output stream \"" << stream_name
+            << "\" because it doesn't exist.";
+    }
+    auto internal_poller = std::make_shared<internal::OutputStreamPollerImpl>();
+    MP_RETURN_IF_ERROR(internal_poller->Initialize(
+        stream_name, &any_packet_type_,
+        std::bind(&CalculatorGraph::UpdateThrottledNodes, this,
+            std::placeholders::_1, std::placeholders::_2),
+        &output_stream_managers_[output_stream_index]));
+    OutputStreamPoller* poller = new OutputStreamPoller(internal_poller);
+    graph_output_streams_.push_back(std::move(internal_poller));
+    return poller;
 }
 
 absl::StatusOr<Packet> CalculatorGraph::GetOutputSidePacket(

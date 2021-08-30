@@ -63,7 +63,7 @@ struct GpuSharedData;
 
 namespace mediapipe {
 
-typedef absl::StatusOr<OutputStreamPoller> StatusOrPoller;
+typedef absl::StatusOr<OutputStreamPoller*> StatusOrPoller;
 
 // The class representing a DAG of calculator nodes.
 //

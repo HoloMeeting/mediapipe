@@ -293,7 +293,7 @@ void InputStreamHandler::SetNextTimestampBound(CollectionItemId id,
   if (!result.ok()) {
     error_callback_(result);
   }
-  if (notify) {
+  if (notify && notification_) {
     notification_();
   }
 }

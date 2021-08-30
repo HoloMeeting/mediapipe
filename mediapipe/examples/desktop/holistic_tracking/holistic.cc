@@ -26,10 +26,10 @@
 
 namespace mediapipe {
 
-HOLISTIC_API CalculatorGraph* create_holistic_graph()
-{
-    CalculatorGraphConfig config =
-        ParseTextProtoOrDie<CalculatorGraphConfig>(R"pb(
+	HOLISTIC_API CalculatorGraph* create_holistic_graph()
+	{
+		CalculatorGraphConfig config =
+			ParseTextProtoOrDie<CalculatorGraphConfig>(R"pb(
         input_stream: "IMAGE:input_video"
         output_stream: "POSE_LANDMARKS:pose_landmarks"
         output_stream: "FACE_LANDMARKS:face_landmarks"
@@ -44,90 +44,140 @@ HOLISTIC_API CalculatorGraph* create_holistic_graph()
             output_stream: "RIGHT_HAND_LANDMARKS:right_hand_landmarks"
         }
       )pb");
-    CalculatorGraph* graph = new CalculatorGraph();
-    auto status = graph->Initialize(config);
-    std::cout << status << std::endl;
-    return graph;
-}
+		CalculatorGraph* graph = new CalculatorGraph();
+		auto status = graph->Initialize(config);
+		std::cout << status << std::endl;
+		return graph;
+	}
 
-HOLISTIC_API Image* create_image_frame(int format, int width, int height, int width_step, uint8* pixel_data)
-{
-    Image* image = new Image();
-    image->GetImageFrameSharedPtr()->AdoptPixelData((ImageFormat::Format)format, width, height, width_step, pixel_data, std::default_delete<uint8[]>());
-    return image;
-}
 
-HOLISTIC_API OutputStreamPoller* get_output_stream_poller(CalculatorGraph* graph, char* stream_name)
-{
-    constexpr OutputStreamPoller* expr = nullptr;
-    ASSIGN_OR_RETURN(OutputStreamPoller poller,
-        graph->AddOutputStreamPoller(stream_name), expr);
-    return &poller;
-}
+	HOLISTIC_API ImageFrame* create_image_frame(int format, int width, int height, int width_step, uint8* pixel_data)
+	{
+		return new ImageFrame(
+			(ImageFormat::Format)format, width, height,
+			width_step, pixel_data, [](uint8*) {});
+	}
 
-HOLISTIC_API void start_run(CalculatorGraph* graph)
-{
-    graph->StartRun({});
-}
+	HOLISTIC_API OutputStreamPoller* get_output_stream_poller(CalculatorGraph* graph, char* stream_name)
+	{
+		StatusOrPoller status = graph->AddOutputStreamPoller(stream_name);
+		return status.value();
+	}
 
-HOLISTIC_API void add_packet_to_input_stream(CalculatorGraph* graph, Image* image_frame, int64 timestamp)
-{
-    graph->AddPacketToInputStream(
-        "input_video", MakePacket<Image>((*image_frame)).At(Timestamp(timestamp)));
-}
+	HOLISTIC_API void start_run(CalculatorGraph* graph)
+	{
+		graph->StartRun({});
+	}
 
-HOLISTIC_API void close_input_stream(CalculatorGraph* graph, char* stream_name)
-{
-    graph->CloseInputStream(stream_name);
-}
+	HOLISTIC_API void add_packet_to_input_stream(CalculatorGraph* graph, ImageFrame* image_frame, long long timestamp)
+	{
+		graph->AddPacketToInputStream(
+			"input_video", MakePacket<ImageFrame>(std::move(*image_frame)).At(Timestamp(timestamp)));
+	}
 
-HOLISTIC_API Packet* create_new_packet()
-{
-    return new Packet();
-}
+	HOLISTIC_API void close_input_stream(CalculatorGraph* graph, char* stream_name)
+	{
+		graph->CloseInputStream("input_video");
+	}
 
-HOLISTIC_API bool poller_next_packet(OutputStreamPoller* poller, Packet* packet)
-{
-    return poller->Next(packet);
-}
+	HOLISTIC_API Packet* create_new_packet()
+	{
+		return new Packet();
+	}
 
-HOLISTIC_API void graph_wait_until_done(CalculatorGraph* graph)
-{
-    graph->WaitUntilDone();
-}
+	HOLISTIC_API bool poller_next_packet(OutputStreamPoller* poller, Packet* packet)
+	{
+		return poller->Next(packet);
+	}
 
-HOLISTIC_API void graph_wait_until_observed_output(CalculatorGraph* graph)
-{
-    graph->WaitForObservedOutput();
-}
+	HOLISTIC_API void graph_wait_until_done(CalculatorGraph* graph)
+	{
+		graph->WaitUntilDone();
+	}
 
-HOLISTIC_API void delete_graph(CalculatorGraph* graph)
-{
-    delete graph;
-}
+	HOLISTIC_API void graph_wait_until_observed_output(CalculatorGraph* graph)
+	{
+		graph->WaitForObservedOutput();
+	}
 
-HOLISTIC_API void delete_packet(Packet* packet)
-{
-    delete packet;
-}
+	HOLISTIC_API void delete_graph(CalculatorGraph* graph)
+	{
+		delete graph;
+	}
 
-HOLISTIC_API void delete_output_stream_poller(OutputStreamPoller* poller)
-{
-    delete poller;
-}
+	HOLISTIC_API void delete_packet(Packet* packet)
+	{
+		delete packet;
+	}
 
-HOLISTIC_API void get_landmark_list_from_packet(Packet* packet, char* str)
-{
-    std::string stri = str;
-    packet->Get<LandmarkList>().SerializeToString(&stri);
-    strcpy(str, stri.c_str());
-}
+	HOLISTIC_API void delete_output_stream_poller(OutputStreamPoller* poller)
+	{
+		delete poller;
+	}
 
-HOLISTIC_API void get_normalized_landmark_list_from_packet(Packet* packet, char* str) 
-{
-    std::string stri = str;
-    packet->Get<NormalizedLandmarkList>().SerializeToString(&stri);
-    strcpy(str, stri.c_str());
-}
+	HOLISTIC_API void delete_image_frame(ImageFrame* frame)
+	{
+		delete frame;
+	}
+
+	HOLISTIC_API void delete_landmark_list(LandmarkList* list)
+	{
+		delete list;
+	}
+
+	HOLISTIC_API void delete_normalized_landmark_list(NormalizedLandmarkList* list)
+	{
+		delete list;
+	}
+
+	HOLISTIC_API LandmarkList* get_landmark_list_from_packet(Packet* packet)
+	{
+		return new LandmarkList(packet->Get<LandmarkList>());
+	}
+
+	HOLISTIC_API NormalizedLandmarkList* get_normalized_landmark_list_from_packet(Packet* packet)
+	{
+		return new NormalizedLandmarkList(packet->Get<NormalizedLandmarkList>());
+	}
+
+	HOLISTIC_API int get_landmark_list_size(LandmarkList* list)
+	{
+		return list->landmark_size();
+	}
+
+	HOLISTIC_API int get_normalized_landmark_list_size(NormalizedLandmarkList* list)
+	{
+		return list->landmark_size();
+	}
+
+	HOLISTIC_API float landmark_x(LandmarkList* list, int index)
+	{
+		return list->landmark(index).x();
+	}
+
+	HOLISTIC_API float landmark_y(LandmarkList* list, int index)
+	{
+		return list->landmark(index).y();
+	}
+
+	HOLISTIC_API float landmark_z(LandmarkList* list, int index)
+	{
+		return list->landmark(index).z();
+	}
+
+	HOLISTIC_API float normalized_landmark_x(NormalizedLandmarkList* list, int index)
+	{
+		return list->landmark(index).x();
+	}
+
+	HOLISTIC_API float normalized_landmark_y(NormalizedLandmarkList* list, int index)
+	{
+		return list->landmark(index).y();
+	}
+
+	HOLISTIC_API float normalized_landmark_z(NormalizedLandmarkList* list, int index)
+	{
+		return list->landmark(index).z();
+	}
 
 }  // namespace mediapipe
