@@ -16,6 +16,14 @@ licenses(["notice"])
 
 package(default_visibility = ["//mediapipe/examples:__subpackages__"])
 
+config_setting(
+    name = "build_on_gcc",
+    define_values = {
+        "GCCBUILD": "1",
+    },
+    visibility = ["//visibility:public"],
+)
+
 cc_binary(
    name = "holisticlib",
    srcs = ["holistic.cc","holistic.h"],
@@ -27,7 +35,11 @@ cc_binary(
        "//mediapipe/framework/port:status",
        "//mediapipe/graphs/holistic_tracking:holistic_tracking_cpu_graph_deps"],
    linkshared = 1,
-   linkstatic = 1
+   linkstatic = 1,
+   defines = select({
+        "//conditions:default": [],
+        "build_on_gcc": ["GCCBUILD=1"],
+    })
 )
 
 cc_binary(
