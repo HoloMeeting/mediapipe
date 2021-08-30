@@ -16,7 +16,7 @@ FROM ubuntu:18.04
 
 MAINTAINER <mediapipe@google.com>
 
-WORKDIR /io
+#WORKDIR /io
 WORKDIR /mediapipe
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -57,17 +57,25 @@ RUN ln -s /usr/bin/python3 /usr/bin/python
 
 # Install bazel
 ARG BAZEL_VERSION=3.7.2
-RUN mkdir /bazel && \
-    wget --no-check-certificate -O /bazel/installer.sh "https://github.com/bazelbuild/bazel/releases/download/${BAZEL_VERSION}/b\
-azel-${BAZEL_VERSION}-installer-linux-x86_64.sh" && \
-    wget --no-check-certificate -O  /bazel/LICENSE.txt "https://raw.githubusercontent.com/bazelbuild/bazel/master/LICENSE" && \
-    chmod +x /bazel/installer.sh && \
-    /bazel/installer.sh  && \
-    rm -f /bazel/installer.sh
+#RUN mkdir /bazel && \
+#    wget --no-check-certificate -O /bazel/installer.sh "https://github.com/bazelbuild/bazel/releases/download/${BAZEL_VERSION}/bazel-${BAZEL_VERSION}-installer-linux-x86_64.sh" && \
+#    wget --no-check-certificate -O  /bazel/LICENSE.txt "https://raw.githubusercontent.com/bazelbuild/bazel/master/LICENSE" && \
+#    chmod +x /bazel/installer.sh && \
+#    /bazel/installer.sh  && \
+#    rm -f /bazel/installer.sh
+
+RUN apt install -y apt-transport-https curl gpg
+RUN curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > bazel.gpg && \
+    mv bazel.gpg /etc/apt/trusted.gpg.d/ && \
+    echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list
+
+RUN apt update && apt install bazel
 
 COPY . /mediapipe/
+RUN mkdir out
 #build dynamic link library for P-Invoke only running on CPU 
-RUN bazel-3.7.2 build --define MEDIAPIPE_DISABLE_GPU=1 --define GCCBUILD mediapipe/examples/desktop/holistic_tracking:holisticlib
+RUN bazel-real --output_base /mediapipe/out build --define MEDIAPIPE_DISABLE_GPU=1 --define GCCBUILD=1 mediapipe/examples/desktop/holistic_tracking:holisticlib
 
 # If we want the docker image to contain the pre-built object_detection_offline_demo binary, do the following
 # RUN bazel build -c opt --define MEDIAPIPE_DISABLE_GPU=1 mediapipe/examples/desktop/demo:object_detection_tensorflow_demo
+#RUN /bin/bash
