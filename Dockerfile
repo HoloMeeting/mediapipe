@@ -14,8 +14,6 @@
 
 FROM ubuntu:18.04
 
-MAINTAINER <mediapipe@google.com>
-
 #WORKDIR /io
 WORKDIR /mediapipe
 
@@ -39,10 +37,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libopencv-video-dev \
         libopencv-calib3d-dev \
         libopencv-features2d-dev \
+        make \
+        gnupg \
         software-properties-common && \
     add-apt-repository -y ppa:openjdk-r/ppa && \
     apt-get update && apt-get install -y openjdk-8-jdk && \
     apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    curl -sL https://deb.nodesource.com/setup_16.x | bash - && \
+    apt install -y nodejs && \
     rm -rf /var/lib/apt/lists/*
 
 RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 100 --slave /usr/bin/g++ g++ /usr/bin/g++-8
@@ -75,6 +78,37 @@ COPY . /mediapipe/
 RUN mkdir out
 #build dynamic link library for P-Invoke only running on CPU 
 RUN bazel-real --output_base /mediapipe/out build --define MEDIAPIPE_DISABLE_GPU=1 --define GCCBUILD=1 mediapipe/examples/desktop/holistic_tracking:holisticlib
+
+WORKDIR /
+RUN mkdir /out
+
+RUN cp /mediapipe/out/execroot/mediapipe/bazel-out/k8-fastbuild/bin/mediapipe/examples/desktop/holistic_tracking/libholisticlib.so /out/holisticlib.so &&\
+    cp /mediapipe/mediapipe/modules/face_detection/face_detection_full_range.tflite /out/mediapipe/modules/face_detection/ &&\
+    cp /mediapipe/mediapipe/modules/face_detection/face_detection_full_range_sparse.tflite /out/mediapipe/modules/face_detection/ &&\    
+    cp /mediapipe/mediapipe/modules/face_detection/face_detection_short_range.tflite /out/mediapipe/modules/face_detection/ &&\
+    cp /mediapipe/mediapipe/modules/face_landmark/face_landmark.tflite /out/mediapipe/modules/face_landmark/ &&\
+    cp /mediapipe/mediapipe/modules/hand_landmark/face_detection_full_range_sparse.tflite /out/mediapipe/modules/hand_landmark/ &&\    
+    cp /mediapipe/mediapipe/modules/hand_landmark/hand_landmark_sparse.tflite /out/mediapipe/modules/hand_landmark/ &&\
+    cp /mediapipe/mediapipe/modules/hand_landmark/handedness.txt /out/mediapipe/modules/hand_landmark/ &&\
+    cp /mediapipe/mediapipe/modules/holistic_landmark/hand_recrop.tflite /out/mediapipe/modules/holistic_landmark/ &&\
+    cp /mediapipe/mediapipe/modules/iris_landmark/iris_landmark.tflite /out/mediapipe/modules/iris_landmark/ &&\    
+    cp /mediapipe/mediapipe/modules/objectron/object_detection_3d_camera.tflite /out/mediapipe/modules/objectron/ &&\
+    cp /mediapipe/mediapipe/modules/objectron/object_detection_3d_chair.tflite /out/mediapipe/modules/objectron/ &&\
+    cp /mediapipe/mediapipe/modules/objectron/object_detection_3d_chair_1stage.tflite /out/mediapipe/modules/objectron/ &&\    
+    cp /mediapipe/mediapipe/modules/objectron/object_detection_3d_cup.tflite /out/mediapipe/modules/objectron/ &&\
+    cp /mediapipe/mediapipe/modules/objectron/object_detection_3d_sneakers.tflite /out/mediapipe/modules/objectron/ &&\
+    cp /mediapipe/mediapipe/modules/objectron/object_detection_3d_sneakers_1stage.tflite /out/mediapipe/modules/objectron/ &&\    
+    cp /mediapipe/mediapipe/modules/objectron/object_detection_3d_cup.tflite /out/mediapipe/modules/objectron/ &&\
+    cp /mediapipe/mediapipe/modules/objectron/object_detection_ssd_mobilenetv2_oidv4_fp16.tflite /out/mediapipe/modules/objectron/ &&\
+    cp /mediapipe/mediapipe/modules/palm_detection/palm_detection.tflite /out/mediapipe/modules/palm_detection/ &&\    
+    cp /mediapipe/mediapipe/modules/pose_detection/pose_detection.tflite /out/mediapipe/modules/pose_detection/ &&\
+    cp /mediapipe/mediapipe/modules/pose_landmark/pose_landmark_full.tflite /out/mediapipe/modules/pose_landmark/ &&\
+    cp /mediapipe/mediapipe/modules/pose_landmark/pose_landmark_heavy.tflite /out/mediapipe/modules/pose_landmark/ &&\
+    cp /mediapipe/mediapipe/modules/pose_landmark/pose_landmark_lite.tflite /out/mediapipe/modules/pose_landmark/ &&\
+    cp /mediapipe/mediapipe/modules/selfie_segmentation/selfie_segmentation.tflite /out/mediapipe/modules/selfie_segmentation/ &&\
+    cp /mediapipe/mediapipe/modules/selfie_segmentation/selfie_segmentation_landscape.tflite /out/mediapipe/modules/selfie_segmentation/
+
+RUN rm -rf /mediapipe/
 
 # If we want the docker image to contain the pre-built object_detection_offline_demo binary, do the following
 # RUN bazel build -c opt --define MEDIAPIPE_DISABLE_GPU=1 mediapipe/examples/desktop/demo:object_detection_tensorflow_demo
