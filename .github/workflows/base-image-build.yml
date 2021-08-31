@@ -1,0 +1,46 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: ["master"]
+  workflow_dispatch: 
+jobs:
+  start-runner:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Login 
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      
+      - name: Start self-hosted runner
+        run: |
+          az vm start -g teamsbot-ci -n github-actions-runner-ub1804
+  build-base:
+    runs-on: [self-hosted, Linux, docker]
+    needs: start-runner
+    steps:
+      - uses: actions/checkout@master   
+
+      - name: Build & push Mediapipe base image 
+        run: |  
+          docker login kazendihub.azurecr.io -u $env:username -p $env:password 
+          docker build -t kazendihub.azurecr.io/mediapipe-node-base .
+          docker push kazendihub.azurecr.io/mediapipe-node-base
+          docker system prune --force --filter "until=48h"       
+          docker logout kazendihub.azurecr.io
+        env:
+          username: ${{ secrets.KAZENDI_HUB_USERNAME }}
+          password: ${{ secrets.KAZENDI_HUB_PASSWORD }}
+  stop-runner:
+    runs-on: ubuntu-18.04
+    needs: build-base
+    steps:
+      - name: Login 
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      
+      - name: Deallocate self-hosted runner
+        run: |
+          az vm deallocate -g teamsbot-ci -n github-actions-runner-ub1804 --no-wait
