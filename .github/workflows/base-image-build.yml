@@ -24,7 +24,7 @@ jobs:
 
       - name: Build & push Mediapipe base image 
         run: |  
-          docker login kazendihub.azurecr.io -u $env:username -p $env:password 
+          docker login kazendihub.azurecr.io -u $username -p $password 
           docker build -t kazendihub.azurecr.io/mediapipe-node-base .
           docker push kazendihub.azurecr.io/mediapipe-node-base
           docker system prune --force --filter "until=48h"       
