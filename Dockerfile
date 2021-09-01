@@ -42,7 +42,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         software-properties-common && \
     add-apt-repository -y ppa:openjdk-r/ppa && \
     apt-get update && apt-get install -y openjdk-8-jdk && \
-    curl -sL https://deb.nodesource.com/setup_16.x | bash - && \
+    curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
     apt install -y nodejs && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
