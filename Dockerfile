@@ -79,8 +79,10 @@ RUN mkdir out
 RUN bazel-real --output_base /mediapipe/out build --define MEDIAPIPE_DISABLE_GPU=1 --define GCCBUILD=1 mediapipe/examples/desktop/holistic_tracking:holisticlib
 
 WORKDIR /
-RUN  mkdir -p /out/mediapipe/modules/{face_detection,face_landmark,hand_landmark,holistic_landmark,iris_landmark,objectron,palm_detection,pose_detection,pose_landmark,selfie_segmentation}
-RUN dir /out/mediapipe/modules
+RUN  mkdir -p /out/mediapipe/modules/face_detection /out/mediapipe/modules/face_landmark /out/mediapipe/modules/hand_landmark  \
+    /out/mediapipe/modules/iris_landmark /out/mediapipe/modules/objectron /out/mediapipe/modules/palm_detection /out/mediapipe/modules/pose_detection \
+    /out/mediapipe/modules/pose_landmark /out/mediapipe/modules/selfie_segmentation /out/mediapipe/modules/holistic_landmark
+
 RUN cp /mediapipe/out/execroot/mediapipe/bazel-out/k8-fastbuild/bin/mediapipe/examples/desktop/holistic_tracking/libholisticlib.so /out/holisticlib.so &&\
     cp /mediapipe/mediapipe/modules/face_detection/face_detection_full_range.tflite /out/mediapipe/modules/face_detection/face_detection_full_range.tflite &&\
     cp /mediapipe/mediapipe/modules/face_detection/face_detection_full_range_sparse.tflite /out/mediapipe/modules/face_detection/face_detection_full_range_sparse.tflite &&\    
