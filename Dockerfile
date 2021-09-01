@@ -88,7 +88,7 @@ RUN cp /mediapipe/out/execroot/mediapipe/bazel-out/k8-fastbuild/bin/mediapipe/ex
     cp /mediapipe/mediapipe/modules/face_detection/face_detection_full_range_sparse.tflite /out/mediapipe/modules/face_detection/face_detection_full_range_sparse.tflite &&\    
     cp /mediapipe/mediapipe/modules/face_detection/face_detection_short_range.tflite /out/mediapipe/modules/face_detection/face_detection_short_range.tflite &&\
     cp /mediapipe/mediapipe/modules/face_landmark/face_landmark.tflite /out/mediapipe/modules/face_landmark/face_landmark.tflite &&\
-    cp /mediapipe/mediapipe/modules/hand_landmark/face_detection_full_range_sparse.tflite /out/mediapipe/modules/hand_landmark/face_detection_full_range_sparse.tflite &&\    
+    cp /mediapipe/mediapipe/modules/hand_landmark/hand_landmark.tflite /out/mediapipe/modules/hand_landmark/hand_landmark.tflite &&\    
     cp /mediapipe/mediapipe/modules/hand_landmark/hand_landmark_sparse.tflite /out/mediapipe/modules/hand_landmark/hand_landmark_sparse.tflite &&\
     cp /mediapipe/mediapipe/modules/hand_landmark/handedness.txt /out/mediapipe/modules/hand_landmark/handedness.txt &&\
     cp /mediapipe/mediapipe/modules/holistic_landmark/hand_recrop.tflite /out/mediapipe/modules/holistic_landmark/hand_recrop.tflite &&\
