@@ -79,33 +79,33 @@ RUN mkdir out
 RUN bazel-real --output_base /mediapipe/out build --define MEDIAPIPE_DISABLE_GPU=1 --define GCCBUILD=1 mediapipe/examples/desktop/holistic_tracking:holisticlib
 
 WORKDIR /
-RUN mkdir /out
+RUN  mkdir -p /out/mediapipe/modules/{face_detection,face_landmark,hand_landmark,holistic_landmark,iris_landmark,objectron,palm_detection,pose_detection,pose_landmark,selfie_segmentation}
 
 RUN cp /mediapipe/out/execroot/mediapipe/bazel-out/k8-fastbuild/bin/mediapipe/examples/desktop/holistic_tracking/libholisticlib.so /out/holisticlib.so &&\
-    cp /mediapipe/mediapipe/modules/face_detection/face_detection_full_range.tflite /out/mediapipe/modules/face_detection/ &&\
-    cp /mediapipe/mediapipe/modules/face_detection/face_detection_full_range_sparse.tflite /out/mediapipe/modules/face_detection/ &&\    
-    cp /mediapipe/mediapipe/modules/face_detection/face_detection_short_range.tflite /out/mediapipe/modules/face_detection/ &&\
-    cp /mediapipe/mediapipe/modules/face_landmark/face_landmark.tflite /out/mediapipe/modules/face_landmark/ &&\
-    cp /mediapipe/mediapipe/modules/hand_landmark/face_detection_full_range_sparse.tflite /out/mediapipe/modules/hand_landmark/ &&\    
-    cp /mediapipe/mediapipe/modules/hand_landmark/hand_landmark_sparse.tflite /out/mediapipe/modules/hand_landmark/ &&\
-    cp /mediapipe/mediapipe/modules/hand_landmark/handedness.txt /out/mediapipe/modules/hand_landmark/ &&\
-    cp /mediapipe/mediapipe/modules/holistic_landmark/hand_recrop.tflite /out/mediapipe/modules/holistic_landmark/ &&\
-    cp /mediapipe/mediapipe/modules/iris_landmark/iris_landmark.tflite /out/mediapipe/modules/iris_landmark/ &&\    
-    cp /mediapipe/mediapipe/modules/objectron/object_detection_3d_camera.tflite /out/mediapipe/modules/objectron/ &&\
-    cp /mediapipe/mediapipe/modules/objectron/object_detection_3d_chair.tflite /out/mediapipe/modules/objectron/ &&\
-    cp /mediapipe/mediapipe/modules/objectron/object_detection_3d_chair_1stage.tflite /out/mediapipe/modules/objectron/ &&\    
-    cp /mediapipe/mediapipe/modules/objectron/object_detection_3d_cup.tflite /out/mediapipe/modules/objectron/ &&\
-    cp /mediapipe/mediapipe/modules/objectron/object_detection_3d_sneakers.tflite /out/mediapipe/modules/objectron/ &&\
-    cp /mediapipe/mediapipe/modules/objectron/object_detection_3d_sneakers_1stage.tflite /out/mediapipe/modules/objectron/ &&\    
-    cp /mediapipe/mediapipe/modules/objectron/object_detection_3d_cup.tflite /out/mediapipe/modules/objectron/ &&\
-    cp /mediapipe/mediapipe/modules/objectron/object_detection_ssd_mobilenetv2_oidv4_fp16.tflite /out/mediapipe/modules/objectron/ &&\
-    cp /mediapipe/mediapipe/modules/palm_detection/palm_detection.tflite /out/mediapipe/modules/palm_detection/ &&\    
-    cp /mediapipe/mediapipe/modules/pose_detection/pose_detection.tflite /out/mediapipe/modules/pose_detection/ &&\
-    cp /mediapipe/mediapipe/modules/pose_landmark/pose_landmark_full.tflite /out/mediapipe/modules/pose_landmark/ &&\
-    cp /mediapipe/mediapipe/modules/pose_landmark/pose_landmark_heavy.tflite /out/mediapipe/modules/pose_landmark/ &&\
-    cp /mediapipe/mediapipe/modules/pose_landmark/pose_landmark_lite.tflite /out/mediapipe/modules/pose_landmark/ &&\
-    cp /mediapipe/mediapipe/modules/selfie_segmentation/selfie_segmentation.tflite /out/mediapipe/modules/selfie_segmentation/ &&\
-    cp /mediapipe/mediapipe/modules/selfie_segmentation/selfie_segmentation_landscape.tflite /out/mediapipe/modules/selfie_segmentation/
+    cp /mediapipe/mediapipe/modules/face_detection/face_detection_full_range.tflite /out/mediapipe/modules/face_detection/face_detection_full_range.tflite &&\
+    cp /mediapipe/mediapipe/modules/face_detection/face_detection_full_range_sparse.tflite /out/mediapipe/modules/face_detection/face_detection_full_range_sparse.tflite &&\    
+    cp /mediapipe/mediapipe/modules/face_detection/face_detection_short_range.tflite /out/mediapipe/modules/face_detection/face_detection_short_range.tflite &&\
+    cp /mediapipe/mediapipe/modules/face_landmark/face_landmark.tflite /out/mediapipe/modules/face_landmark/face_landmark.tflite &&\
+    cp /mediapipe/mediapipe/modules/hand_landmark/face_detection_full_range_sparse.tflite /out/mediapipe/modules/hand_landmark/face_detection_full_range_sparse.tflite &&\    
+    cp /mediapipe/mediapipe/modules/hand_landmark/hand_landmark_sparse.tflite /out/mediapipe/modules/hand_landmark/hand_landmark_sparse.tflite &&\
+    cp /mediapipe/mediapipe/modules/hand_landmark/handedness.txt /out/mediapipe/modules/hand_landmark/handedness.txt &&\
+    cp /mediapipe/mediapipe/modules/holistic_landmark/hand_recrop.tflite /out/mediapipe/modules/holistic_landmark/hand_recrop.tflite &&\
+    cp /mediapipe/mediapipe/modules/iris_landmark/iris_landmark.tflite /out/mediapipe/modules/iris_landmark/iris_landmark.tflite &&\    
+    cp /mediapipe/mediapipe/modules/objectron/object_detection_3d_camera.tflite /out/mediapipe/modules/objectron/object_detection_3d_camera.tflite &&\
+    cp /mediapipe/mediapipe/modules/objectron/object_detection_3d_chair.tflite /out/mediapipe/modules/objectron/object_detection_3d_chair.tflite &&\
+    cp /mediapipe/mediapipe/modules/objectron/object_detection_3d_chair_1stage.tflite /out/mediapipe/modules/objectron/object_detection_3d_chair_1stage.tflite &&\    
+    cp /mediapipe/mediapipe/modules/objectron/object_detection_3d_cup.tflite /out/mediapipe/modules/objectron/object_detection_3d_cup.tflite &&\
+    cp /mediapipe/mediapipe/modules/objectron/object_detection_3d_sneakers.tflite /out/mediapipe/modules/objectron/object_detection_3d_sneakers.tflite &&\
+    cp /mediapipe/mediapipe/modules/objectron/object_detection_3d_sneakers_1stage.tflite /out/mediapipe/modules/objectron/object_detection_3d_sneakers_1stage.tflite &&\    
+    cp /mediapipe/mediapipe/modules/objectron/object_detection_3d_cup.tflite /out/mediapipe/modules/objectron/object_detection_3d_cup.tflite &&\
+    cp /mediapipe/mediapipe/modules/objectron/object_detection_ssd_mobilenetv2_oidv4_fp16.tflite /out/mediapipe/modules/objectron/object_detection_ssd_mobilenetv2_oidv4_fp16.tflite &&\
+    cp /mediapipe/mediapipe/modules/palm_detection/palm_detection.tflite /out/mediapipe/modules/palm_detection/palm_detection.tflite &&\    
+    cp /mediapipe/mediapipe/modules/pose_detection/pose_detection.tflite /out/mediapipe/modules/pose_detection/pose_detection.tflite &&\
+    cp /mediapipe/mediapipe/modules/pose_landmark/pose_landmark_full.tflite /out/mediapipe/modules/pose_landmark/pose_landmark_full.tflite &&\
+    cp /mediapipe/mediapipe/modules/pose_landmark/pose_landmark_heavy.tflite /out/mediapipe/modules/pose_landmark/pose_landmark_heavy.tflite &&\
+    cp /mediapipe/mediapipe/modules/pose_landmark/pose_landmark_lite.tflite /out/mediapipe/modules/pose_landmark/pose_landmark_lite.tflite &&\
+    cp /mediapipe/mediapipe/modules/selfie_segmentation/selfie_segmentation.tflite /out/mediapipe/modules/selfie_segmentation/selfie_segmentation.tflite &&\
+    cp /mediapipe/mediapipe/modules/selfie_segmentation/selfie_segmentation_landscape.tflite /out/mediapipe/modules/selfie_segmentation/selfie_segmentation_landscape.tflite
 
 RUN rm -rf /mediapipe/
 
