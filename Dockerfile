@@ -80,8 +80,7 @@ RUN bazel-real --output_base /mediapipe/out build --define MEDIAPIPE_DISABLE_GPU
 
 WORKDIR /
 RUN  mkdir -p /out/mediapipe/modules/{face_detection,face_landmark,hand_landmark,holistic_landmark,iris_landmark,objectron,palm_detection,pose_detection,pose_landmark,selfie_segmentation}
-RUN chmod -R 755 /out
-
+RUN ll /out/mediapipe/modules
 RUN cp /mediapipe/out/execroot/mediapipe/bazel-out/k8-fastbuild/bin/mediapipe/examples/desktop/holistic_tracking/libholisticlib.so /out/holisticlib.so &&\
     cp /mediapipe/mediapipe/modules/face_detection/face_detection_full_range.tflite /out/mediapipe/modules/face_detection/face_detection_full_range.tflite &&\
     cp /mediapipe/mediapipe/modules/face_detection/face_detection_full_range_sparse.tflite /out/mediapipe/modules/face_detection/face_detection_full_range_sparse.tflite &&\    
