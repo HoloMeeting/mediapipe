@@ -63,7 +63,7 @@ namespace mediapipe {
 	HOLISTIC_API OutputStreamPoller* get_output_stream_poller(CalculatorGraph* graph, char* stream_name)
 	{
 		StatusOrPoller status = graph->AddOutputStreamPoller(stream_name);
-		std::cout<<"got outputstream poller == "<<status.status()" for stream: " << stream_name << std::endl
+		std::cout<<"got outputstream poller == " << status.status() << " for stream: " << stream_name << std::endl
 		return status.value();
 	}
 
