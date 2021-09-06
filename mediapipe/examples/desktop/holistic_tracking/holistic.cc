@@ -46,43 +46,51 @@ namespace mediapipe {
       )pb");
 		CalculatorGraph* graph = new CalculatorGraph();
 		auto status = graph->Initialize(config);
-		std::cout << status << std::endl;
+		std::cout << "Created and initialized Holistic graph" << status << std::endl;
 		return graph;
 	}
 
 
 	HOLISTIC_API ImageFrame* create_image_frame(int format, int width, int height, int width_step, uint8* pixel_data)
 	{
-		return new ImageFrame(
+		auto frame = new ImageFrame(
 			(ImageFormat::Format)format, width, height,
 			width_step, pixel_data, [](uint8*) {});
+		std::cout << "created ImageFrame" << std::endl;
+		return frame;
 	}
 
 	HOLISTIC_API OutputStreamPoller* get_output_stream_poller(CalculatorGraph* graph, char* stream_name)
 	{
 		StatusOrPoller status = graph->AddOutputStreamPoller(stream_name);
+		std::cout<<"got outputstream poller == "<<status.status()" for stream: " << stream_name << std::endl
 		return status.value();
 	}
 
 	HOLISTIC_API void start_run(CalculatorGraph* graph)
 	{
-		graph->StartRun({});
+		auto status = graph->StartRun({});
+		std::cout << "called start run returned Status " << status << std::endl;
 	}
 
 	HOLISTIC_API void add_packet_to_input_stream(CalculatorGraph* graph, ImageFrame* image_frame, long long timestamp)
 	{
 		graph->AddPacketToInputStream(
 			"input_video", MakePacket<ImageFrame>(std::move(*image_frame)).At(Timestamp(timestamp)));
+		std::cout << "Added Image to input stream with timestamp: " << timestamp << std::endl;
 	}
 
 	HOLISTIC_API void close_input_stream(CalculatorGraph* graph, char* stream_name)
 	{
 		graph->CloseInputStream("input_video");
+		std::cout << "closed input stream" << std::endl;
 	}
 
 	HOLISTIC_API Packet* create_new_packet()
 	{
-		return new Packet();
+		auto packet = new Packet();
+		std::cout << "Created new Packet" << std::endl;
+		return packet;
 	}
 
 	HOLISTIC_API bool poller_next_packet(OutputStreamPoller* poller, Packet* packet)
@@ -92,12 +100,14 @@ namespace mediapipe {
 
 	HOLISTIC_API void graph_wait_until_done(CalculatorGraph* graph)
 	{
-		graph->WaitUntilDone();
+		auto status = graph->WaitUntilDone();
+		std::cout << "waited until graph is done " << status << std::endl;
 	}
 
 	HOLISTIC_API void graph_wait_until_observed_output(CalculatorGraph* graph)
 	{
-		graph->WaitForObservedOutput();
+		auto status = graph->WaitForObservedOutput();
+		std::cout << "waited until observed output " << status << std::endl;
 	}
 
 	HOLISTIC_API void delete_graph(CalculatorGraph* graph)
